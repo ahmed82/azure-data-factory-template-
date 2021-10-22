@@ -1,0 +1,17 @@
+{
+	"name": "rs05dbrefrence",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "azure_kv01",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "azure-sql-db"
+			}
+		}
+	}
+}

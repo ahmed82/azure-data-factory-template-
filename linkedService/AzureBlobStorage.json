@@ -1,0 +1,17 @@
+{
+	"name": "rs05ue2ployaltysltnsa01",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "azure_kv01",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "bolbstoragename-sa"
+			}
+		}
+	}
+}

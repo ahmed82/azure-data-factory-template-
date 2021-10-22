@@ -1,0 +1,12 @@
+{
+	"name": "LoyaltySolutionDb_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "rs05dbrefrence",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

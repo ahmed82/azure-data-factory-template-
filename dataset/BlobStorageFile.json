@@ -1,0 +1,38 @@
+{
+	"name": "BlobStorageFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bolbstoragename-sa",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"directoryPath": {
+				"type": "string"
+			},
+			"fileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().fileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().directoryPath",
+					"type": "Expression"
+				},
+				"container": "reports"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

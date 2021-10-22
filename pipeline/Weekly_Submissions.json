@@ -1,0 +1,142 @@
+{
+	"name": "Weekly_Submissions",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get weekly submissions",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Set dated output path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT [column1] as [ID], [column2] as [Location], [column3] as [Card Number]\nFROM [dbo].[table]\nWHERE [column5] =1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "LoyaltySolutionDb_DS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BlobStorageFile",
+						"type": "DatasetReference",
+						"parameters": {
+							"directoryPath": {
+								"value": "@variables('outputPath')",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@variables('outputFile')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Set dated output path",
+				"description": "",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "outputPath",
+					"value": {
+						"value": "@formatDateTime(convertFromUtc(utcnow(), 'Eastern Standard Time'), 'yyyy/MM/dd/')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send email",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get weekly submissions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-24.eastus2.logic.azure.com:443/workflows/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+					"method": "POST",
+					"body": {
+						"value": "@concat('{\"fromAddr\":\"sender@mail.com\", \"toAddrs\":\"a.alsalih2@gmail.com;a.alsalih3@gmail.com; rewards@hannaford.com', variables('toAddrs'), '\", \"ccAddrs\":\"', variables('ccAddrs'), '\", \"bccAddrs\":\"', variables('bccAddrs'), '\", \"subject\":\"Associate Loyalty Weekly Submissions\", \"body\":\"Please see attached for the associate loyalty weekly submissions\", \"attachment\":\"reports/', variables('outputPath'), variables('outputFile'), '\"}')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"outputPath": {
+				"type": "String"
+			},
+			"outputFile": {
+				"type": "String",
+				"defaultValue": "weeklySubmissions.csv"
+			},
+			"toAddrs": {
+				"type": "String"
+			},
+			"ccAddrs": {
+				"type": "String"
+			},
+			"bccAddrs": {
+				"type": "String",
+				"defaultValue": "a.alsalih2@gmail.com"
+			}
+		},
+		"folder": {
+			"name": "Reports"
+		},
+		"annotations": []
+	}
+}
